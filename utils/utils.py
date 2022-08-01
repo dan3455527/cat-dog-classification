@@ -19,7 +19,8 @@ def train(n_epochs, optimizer, model, device, loss_func, train_loader, verbose=T
     # training part
     model.train()
     for batch_idx, (input, labels) in enumerate(train_loader):
-      input, labels = input.to(device), labels.to(device)
+      input, labels = input.to(device), labels.type(torch.LongTensor)
+      labels = labels.to(device)
       optimizer.zero_grad()
       output = model(input)
       loss =  loss_func(output, labels)
@@ -32,7 +33,8 @@ def train(n_epochs, optimizer, model, device, loss_func, train_loader, verbose=T
     if validation_loader != None:
       model.eval()
       for _batch_idx, (val_input, val_labels) in enumerate(validation_loader):
-        val_input, val_labels = val_input.to(device), val_labels.to(device)
+        val_input, val_labels = val_input.to(device), val_labels.type(torch.LongTensor)
+        val_labels = val_labels.to(device)
         val_output = model(val_input)
         loss = loss_func(val_output, val_labels)
         val_loss += loss.item()
@@ -69,7 +71,8 @@ def test(model, test_loader, device):
   test_total = 0
   with torch.no_grad():
     for _batch_id, (input, labels) in enumerate(test_loader):
-      input, labels = input.to(device), labels.to(device)
+      input, labels = input.to(device), labels.type(torch.LongTensor)
+      labels = labels.to(device)
       output = model(input)
       pred = torch.max(output, dim=1)[1]
       test_total += labels.size(0)
@@ -78,7 +81,7 @@ def test(model, test_loader, device):
     print(f"Accuracy: {test_acc:.6f}")
   return test_acc
 
-def plot_curve(history_dict):
+def plot_curve(history_dict, mode):
   plt.plot(history_dict["loss"])
   if history_dict["val_loss"]:
     plt.plot(history_dict["val_loss"])
@@ -87,7 +90,10 @@ def plot_curve(history_dict):
   # plt.ylim(0,)
   plt.xlabel("epochs")
   plt.legend(["train", "val"], loc="upper right")
-  plt.show()
+  if mode == "show":
+    plt.show()
+  elif mode == "save":
+    plt.savefig("./model_loss.png")
   
   plt.plot(history_dict["acc"])
   if history_dict["val_acc"]:
@@ -98,5 +104,8 @@ def plot_curve(history_dict):
   plt.xlabel("epochs")
   plt.legend(["train", "val"], loc="upper right")
   plt.tight_layout()
-  plt.show() 
+  if mode == "show":
+    plt.show()
+  elif mode == "save":
+    plt.savefig("./model_accuracy.png")
   pass
