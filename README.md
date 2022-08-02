@@ -12,7 +12,12 @@ pytorch pre-trained resnet18 model.
 |model|time-cost|accuracy|
 |-----|---------|--------|
 |CNN|6 min|72.45%|
-|ResNet18|9 min|94%|
+|ResNet18|4 min|98.12%|
+### training curve
+|model|accuracy curve|loss curve|
+|-----|--------------|----------|
+|resnet18|![image](https://github.com/dan3455527/cat-dog-classification/blob/main/model_accuracy_resnet18.png)|![image](https://github.com/dan3455527/cat-dog-classification/blob/main/model_loss_resent18.png)|
+
 ## Acknoledgment
 datasets:[kaggle data](https://www.kaggle.com/datasets/tongpython/cat-and-dog?resource=download)
 
