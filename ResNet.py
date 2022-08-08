@@ -49,7 +49,7 @@ class ResNet(nn.Module):
   def __init__(self):
     super(ResNet, self).__init__()
     self.model = models.resnet18(pretrained=True)
-    self.model.fc = nn.Linear(512, 10)
+    self.model.fc = nn.Linear(512, 2)
 
   def forward(self, x):
     x = self.model(x)

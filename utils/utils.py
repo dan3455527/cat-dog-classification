@@ -95,6 +95,8 @@ def plot_curve(history_dict, mode):
   elif mode == "save":
     plt.savefig("./model_loss.png")
   
+  plt.clf()
+
   plt.plot(history_dict["acc"])
   if history_dict["val_acc"]:
     plt.plot(history_dict["val_acc"])
