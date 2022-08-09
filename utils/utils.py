@@ -2,12 +2,17 @@ import torch
 import datetime
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
+from PIL import Image
 
 
+def update_lr(optimizer, lr):
+  for param_group in optimizer.param_groups:
+    param_group["lr"] = lr
 
-def train(n_epochs, optimizer, model, device, loss_func, train_loader, verbose=True, validation_loader=None):
+def train(n_epochs, optimizer, model, device, loss_func, lr, train_loader, verbose=True, validation_loader=None, lr_update=False):
   history = {"loss":[], "acc":[], "val_loss":[], "val_acc":[]}
   model.to(device)
+  curr_lr = lr
   for epoch in range(1, n_epochs+1):
     running_loss = 0.0
     correct = 0.0
@@ -62,6 +67,11 @@ def train(n_epochs, optimizer, model, device, loss_func, train_loader, verbose=T
         print("\r", end="", flush=True)
       else:
         print("\n")
+    # decay lr
+    if lr_update == True:
+      if (epoch + 1) % 8 == 0:
+        curr_lr /= 3
+        update_lr(optimizer, curr_lr)
   return history
 
 def test(model, test_loader, device):
@@ -81,7 +91,9 @@ def test(model, test_loader, device):
     print(f"Accuracy: {test_acc:.6f}")
   return test_acc
 
-def plot_curve(history_dict, mode):
+def plot_curve(history_dict, mode="show", prefix=""):
+  if prefix != "":
+    prefix = prefix + "_"
   plt.plot(history_dict["loss"])
   if history_dict["val_loss"]:
     plt.plot(history_dict["val_loss"])
@@ -93,7 +105,7 @@ def plot_curve(history_dict, mode):
   if mode == "show":
     plt.show()
   elif mode == "save":
-    plt.savefig("./model_loss.png")
+    plt.savefig(f"./{prefix}model_loss.png")
   
   plt.clf()
 
@@ -109,5 +121,5 @@ def plot_curve(history_dict, mode):
   if mode == "show":
     plt.show()
   elif mode == "save":
-    plt.savefig("./model_accuracy.png")
+    plt.savefig(f"./{prefix}model_accuracy.png")
   pass

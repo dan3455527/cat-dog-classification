@@ -10,6 +10,7 @@ from utils.utils import train, test, plot_curve
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
+from torchsummary import summary
 
 transform = transforms.Compose([
   transforms.ToTensor(),
@@ -57,7 +58,7 @@ class ResNet(nn.Module):
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 model = ResNet().to(device)
-print(model)
+summary(model, (3, 224, 224))
 
 loss_func = nn.CrossEntropyLoss()
 optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
