@@ -3,6 +3,30 @@ import datetime
 import matplotlib.pyplot as plt
 from torch.utils.data import Dataset
 from PIL import Image
+import numpy as np
+
+
+# data related
+def image_loader(path, transform):
+  image = Image.open(path)
+  image_tensor = transform(image)
+  return image_tensor
+
+class Trainset(Dataset):
+  def __init__(self, data_path_ls_npy, labels_ls_npy, transform, loader=image_loader):
+    self.transform = transform
+    self.data = np.load(data_path_ls_npy)
+    self.target = np.load(labels_ls_npy)
+    self.loader = loader
+
+  def __getitem__(self, index):
+    fn = self.data[index]
+    data = self.loader(fn, transform=self.transform)
+    target = self.target[index]
+    return data, target
+  
+  def __len__(self):
+    return len(self.data)
 
 
 def update_lr(optimizer, lr):
