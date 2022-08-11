@@ -18,12 +18,12 @@ transform = transforms.Compose([
   transforms.CenterCrop((224, 224))
 ])
 # load data
+batch_size = 64
 
 train_datasets = Trainset(data_path_ls_npy="./data/data_list/train_data_path.npy", labels_ls_npy="./data/data_list/labels_onehot.npy", transform=transform)
 test_datasets = Trainset(data_path_ls_npy="./data/data_list/test_data_path.npy", labels_ls_npy="./data/data_list/test_labels_onehot.npy", transform=transform)
 train_datasets, val_datasets = torch.utils.data.random_split(train_datasets, [int(len(train_datasets)*0.8), int(len(train_datasets)*0.2)])
 
-batch_size = 64
 train_loader = DataLoader(train_datasets, batch_size=batch_size, shuffle=True)
 val_loader = DataLoader(val_datasets, batch_size=batch_size, shuffle=False)
 test_loader = DataLoader(test_datasets, batch_size=batch_size, shuffle=False)
@@ -31,6 +31,7 @@ test_loader = DataLoader(test_datasets, batch_size=batch_size, shuffle=False)
 # main 
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
+layers = [1]*8
 model = ResNet(BasicBlock, [1, 1, 1, 1, 1, 1, 1, 1], 2).to(device=device)
 print(device)
 summary(model=model, input_size=(3, 224, 224))
@@ -50,6 +51,7 @@ hist = train(
   lr_update=True
 )
 
+filepath = "./models/resent_self_weight.pt"
+torch.save(model.state_dict(), filepath)
 plot_curve(hist, mode="save", prefix="Essay")
-
 test(model=model, test_loader=test_loader, device=device)

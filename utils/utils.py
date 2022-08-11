@@ -37,6 +37,10 @@ def train(n_epochs, optimizer, model, device, loss_func, lr, train_loader, verbo
   history = {"loss":[], "acc":[], "val_loss":[], "val_acc":[]}
   model.to(device)
   curr_lr = lr
+  last_loss = 100
+  patient = 2
+  patient_trigger_time = 0
+
   for epoch in range(1, n_epochs+1):
     running_loss = 0.0
     correct = 0.0
@@ -86,6 +90,16 @@ def train(n_epochs, optimizer, model, device, loss_func, lr, train_loader, verbo
         output_str += f"Val loss {val_loss / len(validation_loader):.6f}, val_acc {val_acc:.6f}"
         history["val_loss"].append(val_loss/ len(validation_loader.dataset))
         history["val_acc"].append(val_acc)
+
+        # EarlyStoping
+        if (running_loss / len(train_loader) > last_loss):
+          patient_trigger_time += 1
+          if patient_trigger_time >= patient:
+            print(f"EarlyStop at epoch {epoch}")
+            break
+        last_loss = running_loss / len(train_loader)
+
+      # terminal output  
       print(output_str, end="")
       if verbose == False:
         print("\r", end="", flush=True)
@@ -147,3 +161,7 @@ def plot_curve(history_dict, mode="show", prefix=""):
   elif mode == "save":
     plt.savefig(f"./{prefix}model_accuracy.png")
   pass
+
+def model_checkpoint():
+  
+  return None
