@@ -48,16 +48,8 @@ for root, dirs, files in os.walk("./data/test_set/test_set/dogs"):
       test_data_ls.append(os.path.join(root, file))
       test_label_ls.append(1) 
       
-def onehot(input_list):
-  tensor_ls = torch.tensor(input_list)
-  tensor_ls = F.one_hot(tensor_ls)
-  input_list = tensor_ls.tolist()
-  return input_list
-
-label_ls = onehot(label_ls)
-test_label_ls = onehot(test_label_ls)
-
 np.save("train_data_path.npy", data_ls)
-np.save("labels_onehot.npy", label_ls)
+np.save("labels.npy", label_ls)
 np.save("test_data_path.npy", test_data_ls)
-np.save("test_labels_onehot.npy", test_label_ls)
+np.save("test_labels.npy", test_label_ls)
+print("Done!!")
